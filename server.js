@@ -5,7 +5,7 @@ const app = express();
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('./config/ppConfig');
-const isLoggedIn = require('./middleware/isLoggedIn')
+const isLoggedIn = require('./middleware/isLoggedIn');
 
 const SECRET_SESSION = process.env.SECRET_SESSION;
 console.log(SECRET_SESSION);
@@ -38,7 +38,14 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+// Add this above /auth controllers
+app.get('/profile', isLoggedIn, (req, res) => {
+  const { id, name, email } = req.user.get(); 
+  res.render('profile', { id, name, email });
+});
+
 app.use('/auth', require('./controllers/auth'));
+
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
